@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>סופר סמארט - ברוכים הבאים לקהילה</title>
+    <title>סופר סמארט - תודה על הבחירה בנו</title>
     <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;700&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Assistant', sans-serif; background-color: #f0f2f5; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; color: #1c1e21; }
@@ -23,14 +23,14 @@
     <div id="content">
         <div class="icon">🍎🥦🍇</div>
         <h1>סופר סמארט</h1>
-        <p>ברוכים הבאים לקהילה שלנו...</p>
+        <p>מעבד את נתוני הרכישה...</p>
     </div>
 </div>
 
 <script>
     const urlParams = new URLSearchParams(window.location.search);
     const isSuccess = urlParams.get('thankyou');
-    const customerName = urlParams.get('contact') || "לקוח יקר";
+    const customerName = urlParams.get('contact') || "חבר קהילה";
     const totalAmount = urlParams.get('sum') || "0.00";
 
     const cartData = JSON.parse(localStorage.getItem('shopping_cart')) || [];
@@ -46,20 +46,20 @@
                 itemsTextForWA += `🧺 ${item.name} (${item.quantity})\n`;
             });
         } else {
-            itemsHtml = "הזמנה חדשה מחבר קהילה";
+            itemsHtml = "הזמנה חדשה בסופר סמארט";
             itemsTextForWA = "פירוט מוצרים יצורף טלפונית";
         }
 
         contentDiv.innerHTML = `
-            <div class="icon">✨🙌✨</div>
-            <h1>איזה כיף שאתה איתנו, ${customerName}!</h1>
-            <p>שמחים שהצטרפת לקהילת <b>סופר סמארט</b>. התשלום עבר בהצלחה והסל הטרי שלך כבר בדרך להכנה! 🍎🥕</p>
+            <div class="icon">✨🧺✨</div>
+            <h1>תודה שחזרת אלינו, ${customerName}!</h1>
+            <p>שמחים שוב שבחרת ב<b>סופר סמארט</b>. התשלום עבר בהצלחה והסל הטרי שלך כבר בטיפול! 🍎🥕</p>
             <div class="details-box">
-                <strong>💰 סיכום עסקה:</strong> ₪${totalAmount}<br><br>
-                <strong>📦 מה בחרת מהטבע:</strong><br>
+                <strong>💰 סיכום הרכישה:</strong> ₪${totalAmount}<br><br>
+                <strong>📦 מה בחרת היום:</strong><br>
                 ${itemsHtml}
             </div>
-            <p>לחצו כאן לעדכון הקהילה ותיאום איסוף:</p>
+            <p>לחצו כאן לעדכון סופי ותיאום איסוף:</p>
             <button class="btn" onclick="sendToWhatsApp('${customerName}', '${totalAmount}', \`${encodeURIComponent(itemsTextForWA)}\`)">
                  תיאום איסוף בוואטסאפ 💬
             </button>
@@ -68,22 +68,22 @@
         contentDiv.innerHTML = `
             <div class="icon">🍎🥦🍇</div>
             <h1>סופר סמארט</h1>
-            <p>ברוכים הבאים לקהילה הכי רעננה שיש!<br>הדף מוכן ומחכה לסיום הרכישה.</p>
+            <p>ברוכים הבאים למקום הכי רענן שיש!<br>הדף מוכן ומחכה לסיום הרכישה.</p>
         `;
     }
 
     function sendToWhatsApp(name, sum, items) {
         const decodedItems = decodeURIComponent(items);
-        const phoneNumber = "972547607110"; // <--- שנה כאן למספר שלך
+        const phoneNumber = "972547607110"; // <--- כאן שים את המספר שלך (בלי ה-0 בהתחלה!)
         
-        const message = `*✨ ברוכים הבאים לקהילת סופר סמארט! ✨*\n` +
+        const message = `*✨ תודה שבחרת שוב בסופר סמארט! ✨*\n` +
                         `🍎🥦🍇🥕🍅🍌🥦🍎\n\n` +
                         `*איזה כיף, יש לנו הזמנה חדשה!* 🎉\n\n` +
                         `👤 *חבר קהילה:* ${name}\n` +
                         `💰 *סכום רכישה:* ₪${sum}\n\n` +
-                        `📦 *הסל שנבחר:* \n${decodedItems}\n` +
+                        `📦 *הסל שנבחר היום:* \n${decodedItems}\n` +
                         `🏪 *נא לתאם איתי את האיסוף מהחנות!* \n\n` +
-                        `*תודה שבחרתם סופר סמארט!* 🌱`;
+                        `*סופר סמארט - טריות ואיכות בכל סל!* 🌱`;
         
         const waUrl = `https://api.whatsapp.com/send?phone=${phoneNumber}&text=${encodeURIComponent(message)}`;
         window.open(waUrl, '_blank');
