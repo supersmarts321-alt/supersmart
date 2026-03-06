@@ -95,7 +95,8 @@
 
         async function init() {
             const urlParams = new URLSearchParams(window.location.search);
-            if (urlParams.get('Response') === '000' || urlParams.has('thankyou') || window.location.href.includes('thankyou')) {
+            // זיהוי חזרה מטרנזילה ע"י Response=000 או הפרמטר החדש שלנו thankyou
+            if (urlParams.get('Response') === '000' || urlParams.has('thankyou')) {
                 return showSuccess();
             }
             try {
@@ -105,7 +106,6 @@
         }
 
         function process(data) {
-            // שמות גיליונות בעברית
             data.הגדרות.forEach(r => { if(r[0]) settings[r[0]] = r[1]; });
             document.getElementById('set-title').innerText = settings.כותרת_ראשית || "סופר סמארט";
             document.getElementById('set-subtitle').innerText = settings.תת_כותרת || "";
@@ -119,15 +119,14 @@
             document.getElementById('set-policy-label').innerText = settings.טקסט_אישור || "אני מאשר";
             document.getElementById('set-pay-btn').innerText = settings.כפתור_תשלום || "המשך לתשלום";
             
-            // עבודה מול גיליון "מוצרים" ושליטה בעמודות C (אינדקס 2) ו-H (אינדקס 7)
             products = data.מוצרים.slice(1).map(r => ({
                 name: r[0], 
                 price: parseFloat(r[1])||0, 
-                unit: r[2] || "יח'", // עמודה C
+                unit: r[2] || "יח'", 
                 loc: r[3], 
                 img: r[5], 
                 sale: r[6], 
-                origin: r[7] || "", // עמודה H
+                origin: r[7] || "", 
                 isLeaf: r[8] === "כן"
             })).filter(p => p.name && p.price > 0);
 
@@ -216,8 +215,21 @@
             localStorage.setItem('last_order', JSON.stringify(orderObj));
             fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(orderObj) });
             
-            const tranzilaUrl = `https://direct.tranzila.com/fxpsupersmart/iframenew.php?sum=${orderObj.total.replace(' ₪','')}&contact=${encodeURIComponent(n)}&phone=${p}&email=${encodeURIComponent(e)}`;
-            window.location.href = tranzilaUrl;
+            // --- תיקון טרנזילה עבור GITHUB PAGES ---
+            const cleanSum = orderObj.total.replace(/[^\d.]/g, ''); 
+            const params = new URLSearchParams({
+                sum: cleanSum,
+                contact: n,
+                phone: p,
+                email: e || 'no@email.com',
+                lang: 'he',
+                // מאלץ חזרה ב-GET כדי למנוע את ה-System Error בשרתים סטטיים
+                original_return_method: 'GET',
+                success_url: window.location.origin + window.location.pathname + '?thankyou=1',
+                error_url: window.location.origin + window.location.pathname
+            });
+            
+            window.location.href = `https://direct.tranzila.com/fxpsupersmart/iframenew.php?${params.toString()}`;
         }
 
         function showSuccess() {
